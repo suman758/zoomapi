@@ -74,33 +74,60 @@ app.get("/newmeeting", (req, res) => {
   rp(options)
     .then(function (response) {
       console.log("response is: ", response);
-      setTimeout(() => {
-        var options = {
-          method: "PUT",
-          uri: "https://api.zoom.us/v2/meetings/" + response.id + "/status",
-          body: {
-            "action": "end"
-          },
-          auth: {
-            bearer: token
-          },
-          headers: {
-            "User-Agent": "Zoom-api-Jwt-Request",
-            "content-type": "application/json"
-          },
-          json: true //Parse the JSON string in the response
-        };
+      var options = {
+        method: "PUT",
+        uri: "https://api.zoom.us/v2/meetings/" + response.id,
+        body: {
+          "action": "end"
+        },
+        auth: {
+          bearer: token
+        },
+        headers: {
+          "User-Agent": "Zoom-api-Jwt-Request",
+          "content-type": "application/json"
+        },
+        json: true //Parse the JSON string in the response
+      };
 
-        rp(options)
-          .then(function (response) {
-            console.log("response is: ", response);
-            res.send("create meeting result: " + JSON.stringify(response));
-          })
-          .catch(function (err) {
-            // API call failed...
-            console.log("API call failed, reason ", err);
-          });
-      }, 60000)
+      rp(options)
+        .then(function (response) {
+          alert(JSON.stringify(response));
+          if (response.status != 'waiting') {
+            setTimeout(() => {
+              var options = {
+                method: "PUT",
+                uri: "https://api.zoom.us/v2/meetings/" + response.id + "/status",
+                body: {
+                  "action": "end"
+                },
+                auth: {
+                  bearer: token
+                },
+                headers: {
+                  "User-Agent": "Zoom-api-Jwt-Request",
+                  "content-type": "application/json"
+                },
+                json: true //Parse the JSON string in the response
+              };
+
+              rp(options)
+                .then(function (response) {
+                  console.log("response is: ", response);
+                  res.send("create meeting result: " + JSON.stringify(response));
+                })
+                .catch(function (err) {
+                  // API call failed...
+                  console.log("API call failed, reason ", err);
+                });
+            }, 60000)
+          }
+        })
+        .catch(function (err) {
+          // API call failed...
+          console.log("API call failed, reason ", err);
+        });
+
       const data = {
         id: response.id,
         pwd: response.password
