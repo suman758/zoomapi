@@ -143,7 +143,7 @@ app.get('/checkmeetstatus', (req, res) => {
     });
 })
 
-app.get('/registrants', (req, res) => {
+app.get('/registrant', (req, res) => {
   meetingId = req.query.id;
   var options = {
     method: "GET",
