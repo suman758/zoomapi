@@ -68,7 +68,7 @@ app.get("/newmeeting", (req, res) => {
       "User-Agent": "Zoom-api-Jwt-Request",
       "content-type": "application/json"
     },
-    json: true //Parse the JSON string in the response
+    json: true //Parse the JSON string in the responses
   };
 
   rp(options)
