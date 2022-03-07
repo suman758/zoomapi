@@ -143,4 +143,33 @@ app.get('/checkmeetstatus', (req, res) => {
     });
 })
 
+app.get('/registrants', (req, res) => {
+  meetingId = req.query.id;
+  var options = {
+    method: "GET",
+    uri: "https://api.zoom.us/v2/meetings/" + meetingId + "/registrants",
+    body: {
+      "action": "end"
+    },
+    auth: {
+      bearer: token
+    },
+    headers: {
+      "User-Agent": "Zoom-api-Jwt-Request",
+      "content-type": "application/json"
+    },
+    json: true //Parse the JSON string in the response
+  };
+
+  rp(options)
+    .then(function (response) {
+      console.log("response is: ", response);
+      res.send("create meeting result: " + JSON.stringify(response));
+    })
+    .catch(function (err) {
+      // API call failed...
+      console.log("API call failed, reason ", err);
+    });
+})
+
 http.listen(port, () => console.log(`Listening on port ${port}`));
