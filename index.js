@@ -57,7 +57,8 @@ app.get("/newmeeting", (req, res) => {
       settings: {
         host_video: "true",
         participant_video: "true",
-        watermark: "true"
+        watermark: "true",
+        private_meeting: "true"
       }
     },
     auth: {
