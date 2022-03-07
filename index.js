@@ -74,60 +74,34 @@ app.get("/newmeeting", (req, res) => {
   rp(options)
     .then(function (response) {
       console.log("response is: ", response);
-      var options = {
-        method: "PUT",
-        uri: "https://api.zoom.us/v2/meetings/" + response.id,
-        body: {
-          "action": "end"
-        },
-        auth: {
-          bearer: token
-        },
-        headers: {
-          "User-Agent": "Zoom-api-Jwt-Request",
-          "content-type": "application/json"
-        },
-        json: true //Parse the JSON string in the response
-      };
 
-      rp(options)
-        .then(function (response) {
-          alert(JSON.stringify(response));
-          if (response.status != 'waiting') {
-            setTimeout(() => {
-              var options = {
-                method: "PUT",
-                uri: "https://api.zoom.us/v2/meetings/" + response.id + "/status",
-                body: {
-                  "action": "end"
-                },
-                auth: {
-                  bearer: token
-                },
-                headers: {
-                  "User-Agent": "Zoom-api-Jwt-Request",
-                  "content-type": "application/json"
-                },
-                json: true //Parse the JSON string in the response
-              };
+      setTimeout(() => {
+        var options = {
+          method: "PUT",
+          uri: "https://api.zoom.us/v2/meetings/" + response.id + "/status",
+          body: {
+            "action": "end"
+          },
+          auth: {
+            bearer: token
+          },
+          headers: {
+            "User-Agent": "Zoom-api-Jwt-Request",
+            "content-type": "application/json"
+          },
+          json: true //Parse the JSON string in the response
+        };
 
-              rp(options)
-                .then(function (response) {
-                  console.log("response is: ", response);
-                  res.send("create meeting result: " + JSON.stringify(response));
-                })
-                .catch(function (err) {
-                  // API call failed...
-                  console.log("API call failed, reason ", err);
-                });
-            }, 60000)
-          }
-        })
-        .catch(function (err) {
-          // API call failed...
-          console.log("API call failed, reason ", err);
-        });
-
+        rp(options)
+          .then(function (response) {
+            console.log("response is: ", response);
+            res.send("create meeting result: " + JSON.stringify(response));
+          })
+          .catch(function (err) {
+            // API call failed...
+            console.log("API call failed, reason ", err);
+          });
+      }, 120000)
       const data = {
         id: response.id,
         pwd: response.password
@@ -139,5 +113,34 @@ app.get("/newmeeting", (req, res) => {
       console.log("API call failed, reason ", err);
     });
 });
+
+app.get('/checkmeetstatus', (req, res) => {
+  meetingId = req.query.id;
+  var options = {
+    method: "GET",
+    uri: "https://api.zoom.us/v2/meetings/" + meetingId,
+    body: {
+      "action": "end"
+    },
+    auth: {
+      bearer: token
+    },
+    headers: {
+      "User-Agent": "Zoom-api-Jwt-Request",
+      "content-type": "application/json"
+    },
+    json: true //Parse the JSON string in the response
+  };
+
+  rp(options)
+    .then(function (response) {
+      console.log("response is: ", response);
+      res.send("create meeting result: " + JSON.stringify(response));
+    })
+    .catch(function (err) {
+      // API call failed...
+      console.log("API call failed, reason ", err);
+    });
+})
 
 http.listen(port, () => console.log(`Listening on port ${port}`));
